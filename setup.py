@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-jwt-decorator',
-    version='0.0.1',
+    version='0.0.2',
     author='sunwei',
     author_email='505598397@qq.com',
     url='https://github.com/505598397/django-jwt-decorator',

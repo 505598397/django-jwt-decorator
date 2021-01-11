@@ -36,7 +36,6 @@ class TokenBackend:
 
     _settings = {
         "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),  # 认证TOKEN有效时间
-        # "REFRESH_TOKEN_LIFETIME": timedelta(days=1),  # 刷新TOKEN有效时间
         "UPDATE_USER_LAST_LOGIN_TIME": True,  # 是否更新USER最后登录时间
 
         # 签名所使用的算法
@@ -57,6 +56,7 @@ class TokenBackend:
         "AUTH_HEADER_NAME": "AUTHORIZATION",
         "USER_PRIMARY_KEY_FIELD_NAME": "id",
         "USER_PRIMARY_KEY_FIELD_CLAIM": "id",
+        "LAST_LOGIN_TIME_NAME": 'last_login',
     }
 
     def __init__(self, *args, **kwargs):
@@ -97,7 +97,11 @@ class TokenBackend:
         return jwt.decode(**params)
 
     def access_token(self, user):
-        return self.encode(self.get_payload(user))
+        token = self.encode(self.get_payload(user))
+        if self.LAST_LOGIN_TIME_NAME:
+            user.last_login = timezone.now()
+            user.save()
+        return token
 
     def verify(self, raw_token):
         try:
